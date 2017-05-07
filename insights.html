@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Insights - Trends</title>
+
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/dc.css"/>
+
+    <link rel="stylesheet" type="text/css" href='highlighter/shCore.css'/>
+    <link rel="stylesheet" type="text/css" href='highlighter/shThemeDefault.css'/>
+     <link rel="stylesheet" type="text/css" href="css/colorbrewer.css"/>
+
+    <style>
+        #monthly-volume-chart g.y {
+            display: none;
+        }
+        #bills_monthly-volume-chart g.y {
+            display: none;
+        }
+         #monthly-volume-chart-payment g.y {
+            display: none;
+        }
+
+    .campusLabel {
+      font: 300 18px "Helvetica Neue";
+      color: #525252;
+    }
+
+    .chart-title {
+      font-family: 'Lato', futura, georgia;
+      letter-spacing: 1px;
+      line-height: 15px;
+      text-transform: Uppercase;
+      text-align: center;
+      color: #525252;
+    }
+
+
+    h3 {
+      font-family: 'Helvetica Neue';
+      font-size: 24px;
+      font-weight: 300;
+    }
+
+    body {
+      min-height: 2000px;
+      padding-top: 120px;
+    }
+
+    </style>
+
+
+</head>
+<body >
+    <div class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+      <!--  <div class="navbar-header">
+         <h4>Sales, Expense & Payments Trends</h4>
+        </div>
+    -->
+          <div class="nav navbar-nav">
+          <span class="btn-group" data-toggle="buttons-radio">
+              <button type="button" class="btn btn-default active" id="btnSales"  >Sales</button>
+              <button type="button" class="btn btn-default " id="btnExpenses" >Expenses</button>
+              <button type="button" class="btn btn-default" id="btnPayments" >Payments</button>
+            </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="container" id="sales-container" style="display:none;">
+        <h4>Sales Trends</h4>
+
+        <p>Some questions to consider:
+        How does <a href="javascript:quarterChart.filter('Q1');dc.redrawAll();">Q1 look across years</a>?
+        How are sales in <a href="javascript:monthChart.filter('K.Nov');dc.redrawAll();">Nov YOY</a>?
+	   How much did  <a href="javascript:customerChart.filter('Catherine Douglas');yearlyChart.filter(2009);dc.redrawAll();">
+	   Catherine Douglas purchase in 2009</a>?
+ <div>
+<div class="dc-data-count" id="dc-data-count">
+                        <span class="filter-count"></span> selected out of <span class="total-count"></span> records | <a
+                            href="javascript:dc.filterAll(); dc.renderAll();" style="">Reset All</a>
+                    </div>
+                </div>
+ <div style="display: inline-block;">
+            <div style=" margin-right: 20px; vertical-align: top; display: inline-block;">
+                <div id="quarter-chart" style="margin-bottom: 20px">
+                    <strong>Quarterly Sales</strong>
+                    <a class="reset" href="javascript:quarterChart.filter();dc.redrawAll();" style="display: none;">reset</a>
+
+                    <div class="clearfix"></div>
+
+                </div>
+                <div style="vertical-align: top; margin-left: 0px;">
+                   <div id="yearly-chart">
+                        <strong>Yearly Sales</strong>
+                        <a class="reset" href="javascript:yearlyChart.filter();dc.redrawAll();" style="display: none;">reset</a>
+
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+
+            </div>
+            <div id="month-chart" style=" margin-right: 20px;vertical-align: top; display: inline-block">
+                <strong>Monthly Sales</strong>
+                <a class="reset" href="javascript:monthChart.filter();dc.redrawAll();" style="display: none;">reset</a>
+
+                <div class="clearfix"></div>
+            </div>
+
+            <div id="account-chart" style=" margin-right: 20px;vertical-align: top; display: inline-block">
+                <strong>Sales by Account</strong>
+                <a class="reset" href="javascript:accountChart.filter();dc.redrawAll();" style="display: none;">reset</a>
+
+                <div class="clearfix"></div>
+            </div>
+
+
+            <div class="row" style="display:none;">
+                <div id="amount-cutomer-chart">
+                    <span class="reset" style="display: none;">range: <span class="filter"></span></span>
+                    <a class="reset" href="javascript:amountChart.filterAll();dc.redrawAll();"
+                       style="display: none;">reset</a>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+
+
+
+            <div class="row">
+                <div id="monthly-move-chart">
+
+                    <span class="reset" style="display: none;">range: <span class="filter"></span></span>
+                    <a class="reset" href="javascript:moveChart.filterAll();volumeChart.filterAll();dc.redrawAll();"
+                       style="display: none;">reset</a>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div id="monthly-volume-chart">
+                </div>
+                <p class="muted pull-right" style="margin-right: 15px;">select a time range to zoom in</p>
+            </div>
+
+
+            <div class="row">
+
+                <div style="inline-block;">
+                    <div class="filterInputDiv" style="display: inline-block">
+                        <div style="display: inline-block">
+                            <label style="font-weight:bold;"> Name: </label>
+                            <input type="text" class = "filterTextField Name" id="name" placeHolder="Enter Name" style="margin-right: 5px; width = 175px;"/>
+                        </div>
+                        <div style = "display: inline-block; margin-right: 5px" class = "filterTextField" id = "amount">
+                            <label style="font-weight:bold;"> Amount:</label>
+                            <input type="text" id="amountLessThan" style="width: 94px; " placeHolder="< Than"/>
+                            <input type="text" id="amountGreaterThan" style=" width: 94px ;" placeHolder="> Than"/ >
+                        </div>
+                        <div style = "display: inline-block; margin-right: 10px;" class = "filterTextField" id = "date">
+                            <label style="font-weight:bold;"> Date:</label>
+                            <input type="text" id="dateBegin" style=" width: 94px ;" placeHolder="Start Date"/ >
+                            <input type="text" id="dateEnd" style="width: 94px; " placeHolder="End Date"/>
+                        </div>
+                    </div>
+                     <a href="javascript:filterTable('Sales');dc.redrawAll();">
+                    <img src ="img/goButton.jpeg" style="height: 30px; width: 30px; vertical-align: middle; margin-bottom: 10px;" ></img>
+                    </a>
+
+                </div>
+                <div >
+                    <div class="dc-data-count" id="dc-data-count">
+                        <span class="filter-count"></span> selected out of <span class="total-count"></span> records | <a
+                            href="javascript:dc.filterAll(); dc.renderAll();" style="">Reset All</a>
+                    </div>
+                </div>
+                <table class="table table-hover dc-data-table" id="dc-data-table"  style="width: 700px">
+                    <thead>
+                    <tr class="header">
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Customer</th>
+                         <th>Account</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+
+            <div class="clearfix"></div>
+
+
+        </div>
+
+        <div style="display: inline-block; vertical-align: top;">
+            <div id="customer-chart" style="display: inline-block">
+                <strong>Sales By Customer</strong>
+                <a class="reset" href="javascript:customerChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+
+                <div class="clearfix"></div>
+            </div>
+
+        </div>
+    </div>
+    <div id="expenses-container"  class="container" style="display:none;">
+        <h4>Expense Trends</h4>
+        <p>Some questions to consider:
+        How does <a href="javascript:bills_quarterChart.filter('Q1');dc.redrawAll();">Q1 look across years</a>?
+        How are expenses in <a href="javascript:bills_monthChart.filter('K.Nov');dc.redrawAll();">Nov YOY</a>?
+
+        <div style="display: inline-block;">
+            <div style=" margin-right: 20px; vertical-align: top; display: inline-block;">
+                <div id="bills_quarter-chart" style="margin-bottom: 20px">
+                    <strong>Quarterly Expense</strong>
+                    <a class="reset" href="javascript:bills_quarterChart.filter();dc.redrawAll();" style="display: none;">reset</a>
+
+                    <div class="clearfix"></div>
+
+                </div>
+                <div style="vertical-align: top; margin-left: 0px;">
+                   <div id="bills_yearly-chart">
+                        <strong>Yearly Expense</strong>
+                        <a class="reset" href="javascript:bills_yearlyChart.filter();dc.redrawAll();" style="display: none;">reset</a>
+
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+
+            </div>
+            <div id="bills_month-chart" style=" margin-right: 20px;vertical-align: top; display: inline-block">
+                <strong>Monthly Expense</strong>
+                <a class="reset" href="javascript:bills_monthChart.filter();dc.redrawAll();" style="display: none;">reset</a>
+
+                <div class="clearfix"></div>
+            </div>
+
+            <div id="bills_account-chart" style=" margin-right: 20px;vertical-align: top; display: inline-block">
+                <strong>Expense by Account</strong>
+                <a class="reset" href="javascript:bills_accountChart.filter();dc.redrawAll();" style="display: none;">reset</a>
+
+                <div class="clearfix"></div>
+            </div>
+
+
+            <div class="row" style="display:none;">
+                <div id="bills_amount-cutomer-chart">
+                    <span class="reset" style="display: none;">range: <span class="filter"></span></span>
+                    <a class="reset" href="javascript:bills_amountChart.filterAll();bills_amountChart.filterAll();dc.redrawAll();"
+                       style="display: none;">reset</a>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+
+
+
+            <div class="row">
+                <div id="bills_monthly-move-chart">
+
+                    <span class="reset" style="display: none;">range: <span class="filter"></span></span>
+                    <a class="reset" href="javascript:bills_moveChart.filterAll();bills_volumeChart.filterAll();dc.redrawAll();"
+                       style="display: none;">reset</a>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div id="bills_monthly-volume-chart">
+                </div>
+                <p class="muted pull-right" style="margin-right: 15px;">select a time range to zoom in</p>
+            </div>
+
+
+            <div class="row">
+
+                <div style="inline-block;">
+                    <div class="filterInputDiv" style="display: inline-block">
+                        <div style="display: inline-block">
+                            <label style="font-weight:bold;"> Vendor Name: </label>
+                            <input type="text" class = "filterTextField Name" id="bills_name" placeHolder="Enter Name" style="margin-right: 5px; width = 175px;"/>
+                        </div>
+                        <div style = "display: inline-block; margin-right: 5px" class = "filterTextField" id = "bills_amount">
+                            <label style="font-weight:bold;"> Amount:</label>
+                            <input type="text" id="bills_amountLessThan" style="width: 94px; " placeHolder="< Than"/>
+                            <input type="text" id="bills_amountGreaterThan" style=" width: 94px ;" placeHolder="> Than"/ >
+                        </div>
+                        <div style = "display: inline-block; margin-right: 10px;" class = "filterTextField" id = "bills_date">
+                            <label style="font-weight:bold;"> Date:</label>
+                            <input type="text" id="bills_dateBegin" style=" width: 94px ;" placeHolder="Start Date"/ >
+                            <input type="text" id="bills_dateEnd" style="width: 94px; " placeHolder="End Date"/>
+                        </div>
+                    </div>
+
+                         <a href="javascript:filterTable('Expense');dc.redrawAll();">
+                    <img src ="img/goButton.jpeg" style="height: 30px; width: 30px; vertical-align: middle; margin-bottom: 10px;" ></img>
+                    </a>
+
+                </div>
+                <div >
+                    <div class="dc-data-count" id="bills_dc-data-count">
+                        <span class="filter-count"></span> selected out of <span class="total-count"></span> records | <a
+                            href="javascript:dc.filterAll(); dc.renderAll();" style="">Reset All</a>
+                    </div>
+                </div>
+                <table class="table table-hover dc-data-table" id="bills_dc-data-table"  style="width: 700px">
+                    <thead>
+                    <tr class="header">
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Vendor</th>
+                        <th>Account</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+
+            <div class="clearfix"></div>
+
+
+        </div>
+
+        <div style="display: inline-block; vertical-align: top;">
+            <div id="bills_customer-chart" style="display: inline-block">
+                <strong>Expense By Vendor</strong>
+                <a class="reset" href="javascript:bills_customerChart.filter();dc.redrawAll();" style="display: none;">reset</a>
+
+                <div class="clearfix"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="payments-container" class="container" style="display:none;">
+        <h4>Payment Trends</h4>
+
+        <p>Some questions to consider:
+    	Are high volume transactions paid via  <a href="javascript:accountChartPayment.filter('Square');dc.redrawAll();">
+    	Square</a>? How much is paid in
+    	 <a href="javascript:accountChartPayment.filter('VISA');monthChartPayment.filter('J.Oct');yearlyChartPayment.filter(2009);dc.redrawAll();">Oct 2009 using VISA? </a>
+<div>
+<div class="dc-data-count" id="dc-data-count-payment">
+                        <span class="filter-count"></span> selected out of <span class="total-count"></span> records | <a
+                            href="javascript:dc.filterAll(); dc.renderAll();" style="">Reset All</a>
+                    </div>
+                </div>
+ <div style="display: inline-block;">
+            <div style=" margin-right: 20px; vertical-align: top; display: inline-block;">
+                <div id="quarter-chart-payment" style="margin-bottom: 20px">
+                    <strong>Quarterly</strong>
+                    <a class="reset" href="javascript:quarterChartPayment.filter();dc.redrawAll();" style="display: none;">reset</a>
+
+                    <div class="clearfix"></div>
+
+                </div>
+                <div style="vertical-align: top; margin-left: 0px;">
+                   <div id="yearly-chart-payment">
+                        <strong>Yearly</strong>
+                        <a class="reset" href="javascript:yearlyChartPayment.filter();dc.redrawAll();" style="display: none;">reset</a>
+
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+
+            </div>
+            <div id="month-chart-payment" style=" margin-right: 20px;vertical-align: top; display: inline-block">
+                <strong>Monthly</strong>
+                <a class="reset" href="javascript:monthChartPayment.filter();dc.redrawAll();" style="display: none;">reset</a>
+
+                <div class="clearfix"></div>
+            </div>
+
+            <div id="account-chart-payment" style=" margin-right: 20px;vertical-align: top; display: inline-block">
+                <strong>Method</strong>
+                <a class="reset" href="javascript:accountChartPayment.filter();dc.redrawAll();" style="display: none;">reset</a>
+
+                <div class="clearfix"></div>
+            </div>
+
+
+            <div class="row" style="display:none;">
+                <div id="amount-cutomer-chart-payment">
+                    <span class="reset" style="display: none;">range: <span class="filter"></span></span>
+                    <a class="reset" href="javascript:amountChartPayment.filterAll;dc.redrawAll();"
+                       style="display: none;">reset</a>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+
+
+
+            <div class="row">
+                <div id="monthly-move-chart-payment">
+
+                    <span class="reset" style="display: none;">range: <span class="filter"></span></span>
+                    <a class="reset" href="javascript:moveChartPayment.filterAll();volumeChartPayment.filterAll();dc.redrawAll();"
+                       style="display: none;">reset</a>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div id="monthly-volume-chart-payment">
+                </div>
+                <p class="muted pull-right" style="margin-right: 15px;">select a time range to zoom in</p>
+            </div>
+
+
+            <div class="row">
+
+                <div style="inline-block;">
+                    <div class="filterInputDiv" style="display: inline-block">
+                        <div style="display: inline-block">
+                            <label style="font-weight:bold;"> Name: </label>
+                            <input type="text" class = "filterTextField Name" id="namePayment" placeHolder="Enter Name" style="margin-right: 5px; width = 175px;"/>
+                        </div>
+                        <div style = "display: inline-block; margin-right: 5px" class = "filterTextField" id = "amountPayment">
+                            <label style="font-weight:bold;"> Amount:</label>
+                            <input type="text" id="amountLessThanPayment" style="width: 94px; " placeHolder="< Than"/>
+                            <input type="text" id="amountGreaterThanPayment" style=" width: 94px ;" placeHolder="> Than"/ >
+                        </div>
+                        <div style = "display: inline-block; margin-right: 10px;" class = "filterTextField" id = "datePayment">
+                            <label style="font-weight:bold;"> Date:</label>
+                            <input type="text" id="dateBeginPayment" style=" width: 94px ;" placeHolder="Start Date"/ >
+                            <input type="text" id="dateEndPayment" style="width: 94px; " placeHolder="End Date"/>
+                        </div>
+                    </div>
+                     <a href="javascript:filterTable('Payment');dc.redrawAll();">
+                    <img src ="img/goButton.jpeg" style="height: 30px; width: 30px; vertical-align: middle; margin-bottom: 10px;" ></img>
+                    </a>
+
+                </div>
+                <div >
+                    <div class="dc-data-count" id="dc-data-count-payment">
+                        <span class="filter-count"></span> selected out of <span class="total-count"></span> records | <a
+                            href="javascript:dc.filterAll(); dc.renderAll();" style="">Reset All</a>
+                    </div>
+                </div>
+                <table class="table table-hover dc-data-table" id="dc-data-table-payment"  style="width: 700px">
+                    <thead>
+                    <tr class="header">
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Customer</th>
+                         <th>Method</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+
+            <div class="clearfix"></div>
+
+
+        </div>
+
+        <div style="display: inline-block; vertical-align: top;">
+            <div id="customer-chart-payment" style="display: inline-block">
+                <strong>Customer</strong>
+                <a class="reset" href="javascript:customerChartPayment.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+
+                <div class="clearfix"></div>
+            </div>
+
+        </div>
+    </div>
+
+
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/d3.js"></script>
+<script type="text/javascript" src="js/crossfilter.js"></script>
+<script type="text/javascript" src="js/dc.js"></script>
+
+<script type="text/javascript" src="insights.js"></script>
+<script type="text/javascript" src="nav.js"></script>
+
+<script src='highlighter/shCore.js' type='text/javascript'></script>
+<script src="highlighter/shAutoloader.js" type="text/javascript"></script>
+<script src='highlighter/shBrushJScript.js' type='text/javascript'></script>
+<script src='highlighter/shBrushXml.js' type='text/javascript'></script>
+<script type="text/javascript" src="js/d3.tip.min.js"></script>
+
+
+</body>
+</html>
